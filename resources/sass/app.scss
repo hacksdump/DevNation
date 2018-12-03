@@ -1,0 +1,64 @@
+
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+input#answerBox {
+    position: relative;
+    height: 90%;
+    margin-left: 2%;
+    width: 70%;
+}
+button#postAnswer {
+    position: absolute;
+    right: 5%;
+}
+
+body {
+    font-size: calc(1vw + 0.7vh);
+}
+div.card {
+    margin: 2%;
+}
+
+.site-name {
+    font-size: calc(1vw + 1vh);
+    padding: 0;
+}
+
+.card {
+    padding: 2%;
+}
+
+div#answersContainer{
+    height: calc(18vh + 15vw);
+    overflow-y: scroll;
+    margin: 5%;
+    &:nth-child(2) {
+        background-color: #1d643b;
+    }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-align: center;
+}
+
+.auth-screen {
+    height: fit-content;
+    position: relative;
+    & * {
+        padding-bottom: 1%;
+    }
+}
+
+p.alert-danger {
+    display: none;
+}
+
+h1.modal-header {
+    padding-bottom: 2%;
+}
