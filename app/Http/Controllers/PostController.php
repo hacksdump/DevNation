@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Answer;
+use App\Models\AnswerUpvote;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,10 +53,19 @@ class PostController extends Controller
 
     ///// AJAX functions /////
     public function getAllAnswers($postId) {
-        $answers = Answer::where('question', $postId)->with('user')->orderBy('created_at', 'desc')->get()->pluck('answer')->toArray();
         $answers = Answer::join('users', 'users.id', '=', 'answers.user')
+            ->orderBy('answers.upvotes', 'desc')
             ->orderBy('answers.created_at', 'desc')
-            ->get(['answers.answer', 'users.name']);
+            ->get(['answers.id', 'answers.answer', 'answers.upvotes', 'users.name']);
+        foreach ($answers as &$answer){
+            $prevUpvote = AnswerUpvote::where('answer_id', $answer['id'])->where('user_id', Auth::id())->first();
+            if($prevUpvote){
+                $answer['hasUpvoted'] = 1;
+            }
+            else{
+                $answer['hasUpvoted'] = 0;
+            }
+        }
         echo json_encode($answers);
     }
 
@@ -67,6 +77,28 @@ class PostController extends Controller
                 $postData['question'] = $request->post('question');
                 Answer::create($postData);
                 $this->getAllAnswers($postData['question']);
+            }
+        }
+    }
+
+    public function upvoteAnswer(Request $request){
+        if($request->ajax()) {
+            if (Auth::check()) {
+                $postData['answer_id'] = $request->post('answer_id');
+                $postData['user_id'] = Auth::id();
+                $prevUpvote = AnswerUpvote::where('answer_id', $postData['answer_id'])->where('user_id', Auth::id())->first();
+                if($prevUpvote){
+                    AnswerUpvote::destroy($prevUpvote['id']);
+                    Answer::find($postData['answer_id'])->decrement('upvotes');
+                    $result = -1;
+                }
+                else {
+                    AnswerUpvote::create($postData);
+                    Answer::find($postData['answer_id'])->increment('upvotes');
+                    $result = 1;
+                }
+                echo json_encode(['result' => $result]);
+
             }
         }
     }
