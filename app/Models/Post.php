@@ -18,4 +18,3 @@ class Post extends Model
         return $this->hasMany('App\Models\Answer', 'post', 'id');
     }
 }
-
