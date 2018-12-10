@@ -121,7 +121,9 @@
 
             </script>
         @else
+            <div class="ask-to-login">
             <a href="/login"> Login </a> to answer
+            </div>
             <script>
                 const upvote = function() {
                     location.href = '/login';

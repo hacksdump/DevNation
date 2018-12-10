@@ -25,7 +25,7 @@
             {!! Form::label('email', 'Email', ['class' => 'control-label col-lg-3']) !!}
             {!! Form::email('email', '', ['class' => 'form-control col-lg-8']) !!}
         </div>
-        <p class="alert-danger"> {{ $errors->first('email') }}</p>
+        <p class="alert-danger">{{ $errors->first('email') }}</p>
 
         <div class="row">
             {!! Form::label('password', 'Password', ['class' => 'control-label col-lg-3']) !!}

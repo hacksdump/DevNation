@@ -10466,6 +10466,10 @@ a.text-dark:focus {
   }
 }
 
+.container {
+  text-align: center;
+}
+
 input#answerBox {
   position: relative;
   height: 90%;
@@ -10498,7 +10502,6 @@ div.card {
 div#answersContainer {
   height: calc(18vh + 15vw);
   overflow-y: scroll;
-  margin: 5%;
 }
 
 div#answersContainer:nth-child(2) {
@@ -10515,21 +10518,36 @@ h6 {
 }
 
 .auth-screen {
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
   position: relative;
+  margin: auto !important;
 }
 
 .auth-screen * {
   padding-bottom: 1%;
 }
 
-p.alert-danger {
+p.alert-danger:empty {
   display: none;
 }
 
 h1.modal-header {
   padding-bottom: 2%;
+}
+
+.ask-to-login {
+  margin: 2%;
+}
+
+.upvote-container {
+  position: absolute;
+  left: 0;
+  margin: 2%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
