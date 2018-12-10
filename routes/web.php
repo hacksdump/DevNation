@@ -30,3 +30,5 @@ Route::get('logout', "Auth\LoginController@logout");
 
 Route::post('answer', 'PostController@postAnswer');
 Route::get('answer/{question}', 'PostController@getAllAnswers');
+
+Route::post('upvote', 'PostController@upvoteAnswer');
