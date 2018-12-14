@@ -35,6 +35,7 @@
         <div class="row">
             <div class="col-7"><span>Already have an account?</span> <a href="/login">Login</a></div>
             {!! Form::submit('Submit', ['class' => 'form-control btn btn-sm btn-success col-lg-4']) !!}
+            <a class="col-3" href="/redirect/google"><img src="{{asset('images/google-sign-in.png')}}" alt="Google sign up"></a>
         </div>
         {!! Form::close() !!}
     </div>

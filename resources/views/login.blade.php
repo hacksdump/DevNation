@@ -9,7 +9,7 @@
     <h1 class="modal-header">Login</h1>
     {!! Form::open(['url' => 'login']) !!}
         <div class="row">
-        {!! Form::label('username', 'Username', ['class' => 'control-label col-lg-3']) !!}
+        {!! Form::label('username', 'Username or e-mail', ['class' => 'control-label col-lg-3']) !!}
         {!! Form::text('username', '', ['class' => 'form-control col-lg-8', 'required' => 'required']) !!}
         </div>
         {{ $errors->first('username') }}
@@ -25,6 +25,8 @@
             {!! Form::submit('Submit', ['class' => 'form-control btn btn-sm btn-success col-lg-4']) !!}
         </div>
     {!! Form::close() !!}
+        <a href="/redirect/google"><img src="{{asset('images/google-sign-in.png')}}" alt="Google sign in"></a>
     </div>
+
 
 @stop
