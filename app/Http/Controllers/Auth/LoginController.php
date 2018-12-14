@@ -15,10 +15,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Models\User;
+use phpDocumentor\Reflection\Types\Self_;
+use phpDocumentor\Reflection\Types\Static_;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
+
+    protected static $providers = ['google', 'github'];
 
     /**
      * Where to redirect users after login.
@@ -49,16 +53,16 @@ class LoginController extends Controller
 
     public function redirectToProvider($provider)
     {
-        if($provider === 'google') {
-            return Socialite::driver('google')->redirect();
+        if(in_array($provider, self::$providers)){
+            return Socialite::driver($provider)->redirect();
         }
     }
 
     public function handleProviderCallback($provider)
     {
-        if($provider === 'google') {
+        if(in_array($provider, self::$providers)){
             try {
-                $user = Socialite::driver('google')->user();
+                $user = Socialite::driver($provider)->user();
             } catch (\Exception $e) {
                 return Redirect::to('/login');
             }
