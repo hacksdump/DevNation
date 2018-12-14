@@ -9,8 +9,12 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -43,6 +47,60 @@ class LoginController extends Controller
         return view('register');
     }
 
+    public function redirectToProvider($provider)
+    {
+        if($provider === 'google') {
+            return Socialite::driver('google')->redirect();
+        }
+    }
+
+    public function handleProviderCallback($provider)
+    {
+        if($provider === 'google') {
+            try {
+                $user = Socialite::driver('google')->user();
+            } catch (\Exception $e) {
+                return Redirect::to('/login');
+            }
+        }
+
+        $existingUser = UserController::findUserByEmail($user->email);
+
+        if($existingUser){
+            Auth::login($existingUser, true);
+            return Redirect::to('/');
+        } else {
+            $newUser                  = new User;
+            $newUser->name            = $user->name;
+            $newUser->email           = $user->email;
+            $newUser->google_id       = $user->id;
+            $newUser->avatar          = $user->avatar;
+            $newUser->avatar_original = $user->avatar_original;
+            Session::put('newUser', $newUser);
+            return view('get_username')->with('name', $user->name, ' ');
+        }
+    }
+
+    public function getUsernamePwdAfterOauth(Request $request)
+    {
+        $newUser = Session::get('newUser');
+        $v = $this->oauthRegistrationValidator($request->all());
+        if ($v->fails()) {
+            $request->flash();
+            return view('get_username')
+                ->with('name', $newUser->name)
+                ->withErrors($v->messages());
+        } else {
+            $newUser->username = $request->get('username');
+            $newUser->password = Hash::make($request->get('password'));
+            $newUser->save();
+            Auth::login($newUser);
+            Session::forget('newUser');
+            return Redirect::to('/');
+        }
+    }
+
+
     public function checkLogin(Request $request)
     {
         $rules = array(
@@ -64,10 +122,21 @@ class LoginController extends Controller
                 ->withErrors($v->messages());
 
         } else {
-            $userdata = array(
-                'username' => Input::get('username'),
-                'password' => Input::get('password')
-            );
+            $emailOrUsername = Input::get('username');
+            $password = Input::get('password');
+            if(strpos($emailOrUsername, '@')){
+                $userdata = array(
+                    'email' => $emailOrUsername,
+                    'password' => $password
+                );
+            }
+            else {
+                $userdata = array(
+                    'username' => $emailOrUsername,
+                    'password' => $password
+                );
+            }
+
             if (Auth::attempt($userdata)) {
                 return Redirect::to('/');
             } else {
@@ -75,7 +144,6 @@ class LoginController extends Controller
                 $userExists = UserController::userExists(Input::get('username'));
                 if($userExists){
                     $errors['password'] = 'Wrong password';
-
                 }
                 else{
                     $errors['username'] = 'User does not exist';
@@ -88,9 +156,51 @@ class LoginController extends Controller
         }
     }
 
+    protected function oauthRegistrationValidator(array $data)
+    {
+        return Validator::make($data, [
+            'username' => ['required', 'string', 'string', 'max:20', 'unique:users,username'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+    }
+
+    protected function registrationFormValidator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email'],
+            'username' => ['required', 'string', 'string', 'max:20', 'unique:users,username'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+    }
+
+    protected function registerUser(Request $request)
+    {
+        $v = $this->registrationFormValidator($request->all());
+        if ($v->fails()) {
+            $request->flash();
+            return Redirect::to('/register')
+                ->withInput()
+                ->withErrors($v->messages());
+
+        } else {
+            $userdata = array(
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'username' => $request->get('username'),
+                'password' => Hash::make($request->get('password')),
+            );
+            $user = User::create($userdata);
+            Auth::login($user);
+            return Redirect::to('/');
+        }
+    }
+
     public function logout(){
         Auth::logout();
         return redirect('/');
     }
+
+
 
 }
