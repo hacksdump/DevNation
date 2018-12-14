@@ -18,8 +18,23 @@ class UserController extends Controller
         return view('profile', ['user' => $user, 'posts' => $posts]);
     }
 
-    public static function userExists($username){
+    public static function findUserByEmail($email){
+        $user = User::where('email', $email)->first();
+        return $user;
+    }
+
+    public static function findUserByUsername($username){
         $user = User::where('username', $username)->first();
+        return $user;
+    }
+
+    public static function findUserByEmailOrUsername($emailOrUsername){
+        $user = User::where('email', $emailOrUsername)->orWhere('username', $emailOrUsername)->first();
+        return $user;
+    }
+
+    public static function userExists($emailOrUsername){
+        $user = User::where('email', $emailOrUsername)->orWhere('username', $emailOrUsername)->first();
         if($user)
             return true;
         return false;
