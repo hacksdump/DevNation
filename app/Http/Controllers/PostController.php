@@ -30,7 +30,25 @@ class PostController extends Controller
     public function createPost(Request $request) {
         if(Auth::check()) {
             $post = new Post;
-            $post['question'] = $request->input('query');
+            if(empty($post['question'] = $request->input('query'))){
+                die('error');
+            }
+            $uploadedImageFile = $request->file('uploadImage');
+            $uploadedCodeFile = $request->file('uploadCode');
+            if($uploadedImageFile) {
+                $storedFilePath = $uploadedImageFile->store('testuploads', ['disk' => 'public']);
+                $post['image'] = $storedFilePath;
+            }
+            $languageSelection = $request->input('language');
+            if($languageSelection && $languageSelection !== 'none'){
+                $post['language'] = $request->input('language');
+                if($uploadedCodeFile){
+                    $post['code_snippet'] = file_get_contents($uploadedCodeFile);
+                }
+                else if($code = $request->input('code')){
+                    $post['code_snippet'] = $code;
+                }
+            }
             $post['user'] = Auth::id();
             $post->save();
             return Redirect::to('/');
@@ -56,6 +74,7 @@ class PostController extends Controller
         $answers = Answer::join('users', 'users.id', '=', 'answers.user')
             ->orderBy('answers.upvotes', 'desc')
             ->orderBy('answers.created_at', 'desc')
+            ->where('answers.question', '=', $postId)
             ->get(['answers.id', 'answers.answer', 'answers.upvotes', 'users.name']);
         foreach ($answers as &$answer){
             $prevUpvote = AnswerUpvote::where('answer_id', $answer['id'])->where('user_id', Auth::id())->first();
