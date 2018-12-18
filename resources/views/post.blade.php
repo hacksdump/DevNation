@@ -3,6 +3,10 @@
 @section('title')
     Discuss
     @stop
+@section('header-tags')
+    <link href="{{ asset('css/prism.css') }}" rel="stylesheet" />
+    @stop
+
 
 @section('content')
 
@@ -14,6 +18,16 @@
             <p class="card-body">
                 asked by {{ $post['user']['name'] }} on {{ $post['created_at'] }}
             </p>
+            @if($post['image'])
+                <img class="query-image" src="{{ asset('storage/') . '/' . $post['image'] }}">
+                @endif
+            @if($post['code_snippet'])
+                <pre>
+                <code class="language-{{$post['language']}}">
+                    {{ $post['code_snippet'] }}
+                </code>
+                </pre>
+                @endif
         </div>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script>
@@ -134,9 +148,7 @@
         <h4>Discussion</h4>
         <div id="answersContainer"></div>
     </div>
-    <script>
+    <script src="{{asset('js/prism.js')}}"></script>
 
-
-    </script>
 
 @stop
