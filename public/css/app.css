@@ -10551,3 +10551,12 @@ h1.modal-header {
           flex-direction: column;
 }
 
+img.query-image {
+  position: relative;
+  width: 100%;
+  padding-left: 10%;
+  padding-right: 10%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+

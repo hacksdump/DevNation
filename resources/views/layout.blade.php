@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
     <title> Devnation | @yield('title') </title>
-
+    @yield('header-tags')
 </head>
 <body>
 <header class="navbar bg-secondary">
