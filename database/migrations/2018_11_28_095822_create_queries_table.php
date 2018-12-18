@@ -17,6 +17,9 @@ class CreateQueriesTable extends Migration
             $table->increments('id');
             $table->string('question');
             $table->integer('user');
+            $table->string('image')->nullable();
+            $table->text('code_snippet')->nullable();
+            $table->string('language')->nullable();
             $table->timestamps();
         });
     }
