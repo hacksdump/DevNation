@@ -8,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class PostController extends Controller
 {
@@ -59,12 +60,22 @@ class PostController extends Controller
     }
 
     public static function getAllPosts() {
-        $posts = Post::with('user')->orderBy('created_at', 'desc')->get()->toArray();
+        $posts = Post::with('user')->withCount('answers')->orderBy('created_at', 'desc')->get()->toArray();
         return $posts;
     }
 
+    public static function listAllWithTag($tag) {
+        $posts = Post::with('user')
+            ->withCount('answers')
+            ->where('queries.language', '=', $tag)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toArray();
+        return view('tag')->with('posts', $posts)->with('tag', $tag);
+    }
+
     public static function getAllPostsByUser($userId) {
-        $posts = Post::where('user', $userId)->with('user')->orderBy('created_at', 'desc')->get()->toArray();
+        $posts = Post::where('user', $userId)->with('user')->withCount('answers')->orderBy('created_at', 'desc')->get()->toArray();
         return $posts;
     }
 

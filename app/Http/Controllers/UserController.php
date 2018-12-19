@@ -15,7 +15,13 @@ class UserController extends Controller
         if(Auth::check()){
             $user['self'] = ($username === Auth::user()->username);
         }
-        return view('profile', ['user' => $user, 'posts' => $posts]);
+        $postCount = User::where('username', $username)->withCount('posts')->get()->toArray();
+        $answerCount = User::where('username', $username)->withCount('answers')->get()->toArray();
+        $stats = [
+            'posts_count' => $postCount[0]['posts_count'],
+            'answers_count' => $answerCount[0]['answers_count']
+        ];
+        return view('profile', ['user' => $user, 'posts' => $posts, 'stats' => $stats]);
     }
 
     public static function findUserByEmail($email){

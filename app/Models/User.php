@@ -12,6 +12,10 @@ class User extends Authenticatable
     protected $fillable = ['name', 'username', 'email', 'password'];
     public function posts()
     {
-        return $this->hasMany('App\Models\Post');
+        return $this->hasMany('App\Models\Post', 'user');
+    }
+    public function answers()
+    {
+        return $this->hasMany('App\Models\Answer', 'user');
     }
 }
