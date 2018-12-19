@@ -17,6 +17,8 @@ Route::get('post/{id}', 'PostController@getPost');
 
 Route::get('user/{username}', 'UserController@showProfile');
 
+Route::get('tag/{tag}', 'PostController@listAllWithTag');
+
 Route::get('login', 'Auth\LoginController@showLogin');
 Route::post('login', 'Auth\LoginController@checkLogin');
 
