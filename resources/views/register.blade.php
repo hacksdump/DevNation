@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-    <div class="form-group auth-screen col-lg-6 card">
+    <div class="form-group auth-screen col-lg-6 card shadow">
         <h1 class="modal-header">Register</h1>
     {!! Form::open(['url' => 'register']) !!}
 

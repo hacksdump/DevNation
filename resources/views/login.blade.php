@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-    <div class="auth-screen form-group col-lg-6 card">
+    <div class="auth-screen form-group col-lg-6 card shadow">
     <h1 class="modal-header">Login</h1>
     {!! Form::open(['url' => 'login']) !!}
         <div class="row">
