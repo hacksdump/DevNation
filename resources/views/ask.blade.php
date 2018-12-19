@@ -25,10 +25,10 @@
         {!! Form::open(['url' => 'ask', 'files' => true,  'id' => 'form'])!!}
         {!! Form::label('query', 'Question', ['class' => 'control-label']) !!}
         {!! Form::textarea('query', '', ['class' => 'form-control', 'required' => true]) !!}
-        <button id="displayAdditionalOptions">More options</button>
+        <button id="displayAdditionalOptions" class="btn btn-primary float-right">More options</button>
         <div class="hidden" id="additionalOptions">
             {!! Form::label('uploadImage', 'Image', ['class' => 'control-label']) !!}
-            <input type="file" class="btn" id="uploadImage" name="uploadImage" accept="image">
+            <input type="file" class="btn upload-btn" id="uploadImage" name="uploadImage" accept="image">
             <div>
                 <h4>
                     Upload code
@@ -57,9 +57,10 @@
                 </div>
             </div>
         </div>
-        {!! Form::submit('Submit', ['class' => 'form-control']) !!}
+        {!! Form::submit('Submit', ['class' => 'btn btn-lg btn-success']) !!}
         {!! Form::close() !!}
     </div>
+
 
     <script>
         let optionsHidden = 1;
@@ -96,11 +97,16 @@
                         codeMirrorLanguage = 'python';
                         break;
                 }
-                CodeMirror.fromTextArea(document.getElementById('codesnippet_editable'), {
-                    mode: codeMirrorLanguage,
-                    theme: "icecoder",
-                    lineNumbers: true,
-                });
+                if(this.editor){
+                    this.editor.setOption("mode", codeMirrorLanguage);
+                }
+                else {
+                    this.editor = CodeMirror.fromTextArea(document.getElementById('codesnippet_editable'), {
+                        mode: codeMirrorLanguage,
+                        theme: "icecoder",
+                        lineNumbers: true,
+                    });
+                }
             }
             else {
                 codeOptions.slideUp(300);
@@ -119,4 +125,12 @@
             return true;
         });
     </script>
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/javascript");
+        editor.setShowPrintMargin(false);
+
+    </script-->
 @stop
