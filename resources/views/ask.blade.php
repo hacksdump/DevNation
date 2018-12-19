@@ -5,19 +5,28 @@
     @stop
 
 @section('header-tags')
+    @php($languages = ['python', 'php', 'javascript', 'css'])
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/theme/icecoder.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/keymap/sublime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/php/php.min.js"></script>
+    @foreach ($languages as $language)
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/{{$language}}/{{$language}}.min.js"></script>
+    @endforeach
+
 @stop
 
 @section('content')
-    @php
-        $supportedFileFormats = [];
-        @endphp
     <div class="container">
         {!! Form::open(['url' => 'ask', 'files' => true,  'id' => 'form'])!!}
         {!! Form::label('query', 'Question', ['class' => 'control-label']) !!}
         {!! Form::textarea('query', '', ['class' => 'form-control', 'required' => true]) !!}
         <button id="displayAdditionalOptions">More options</button>
-        <div class="d-none" id="additionalOptions">
+        <div class="hidden" id="additionalOptions">
             {!! Form::label('uploadImage', 'Image', ['class' => 'control-label']) !!}
             <input type="file" class="btn" id="uploadImage" name="uploadImage" accept="image">
             <div>
@@ -32,7 +41,7 @@
                                                   'go' => 'Golang',
                                                    ] , null, ['id' => 'languageSelector'] ) !!}
 
-                <div id="codeOptions" class="d-none">
+                <div id="codeOptions" class="hidden">
                     {!! Form::radio('codeType', 'file',  null, ['id' => 'codeType', 'checked' => true]) !!}
                     <span>File</span>
                     {!! Form::radio('codeType', 'code',  null, ['id' => 'codeType', '']) !!}
@@ -41,9 +50,9 @@
                         {!! Form::label('uploadCode', 'File containing code', ['class' => 'control-label']) !!}
                         {!! Form::file('text', ['name' => 'uploadCode', 'id' => 'uploadCode', 'class' => 'btn']) !!}
                     </div>
-                    <div id="codeText" class="d-none">
+                    <div id="codeText" class="hidden">
                         {!! Form::label('code', 'Type code here', ['class' => 'control-label']) !!}
-                        {!! Form::textarea('code', '', ['class' => 'form-control', 'id' => 'codeArea']) !!}
+                        <textarea style="text-align: center" rows="4" cols="50" name="code" id="codesnippet_editable"></textarea>
                     </div>
                 </div>
             </div>
@@ -57,42 +66,57 @@
         let toggleButton = $('#displayAdditionalOptions');
         let languageSelector = $('#languageSelector');
         let codeOptions = $('#codeOptions');
-        let codeArea = $('#codeArea');
         let codeRadio = $('input[name=codeType]');
         toggleButton.on('click',  function (event) {
             let options = $('#additionalOptions');
             if(optionsHidden){
                 toggleButton.text('Less options');
-                options.removeClass('d-none');
-                optionsHidden = !optionsHidden;
+                options.slideDown(1000);
             }
             else {
                 toggleButton.text('More options');
-                options.addClass('d-none');
-                optionsHidden = !optionsHidden;
+                options.slideUp(500);
             }
+            optionsHidden = !optionsHidden;
             event.preventDefault();
             return false;
         });
         languageSelector.on('change', function (event) {
             if(languageSelector.val() !== "none"){
-                codeOptions.removeClass('d-none');
+                codeOptions.slideDown(400);
+                let codeMirrorLanguage;
+                switch (languageSelector.val()) {
+                    case 'js':
+                        codeMirrorLanguage = 'javascript';
+                        break;
+                    case 'php':
+                        codeMirrorLanguage = 'php';
+                        break;
+                    case 'python':
+                        codeMirrorLanguage = 'python';
+                        break;
+                }
+                CodeMirror.fromTextArea(document.getElementById('codesnippet_editable'), {
+                    mode: codeMirrorLanguage,
+                    theme: "icecoder",
+                    lineNumbers: true,
+                });
             }
             else {
-                codeOptions.addClass('d-none');
+                codeOptions.slideUp(300);
             }
         });
         codeRadio.on('click', function (event) {
             let selection = $(this).val();
             if(selection === 'code'){
-                $('#codeFile').addClass('d-none');
-                $('#codeText').removeClass('d-none');
+                $('#codeFile').slideUp(200);
+                $('#codeText').slideDown(300);
             }
             if(selection === 'file'){
-                $('#codeText').addClass('d-none');
-                $('#codeFile').removeClass('d-none');
+                $('#codeText').slideUp(200);
+                $('#codeFile').slideDown(300);
             }
             return true;
-        })
+        });
     </script>
 @stop
