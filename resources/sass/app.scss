@@ -7,6 +7,13 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+.hidden{
+    display: none;
+}
+
+
+
 .container {
     text-align: center;
 }
@@ -83,4 +90,12 @@ img.query-image {
     padding-left: 10%;
     padding-right: 10%;
     object-fit: contain;
+}
+
+pre.CodeMirror-line {
+    text-align: left !important;
+
+    & > span {
+        margin-left: 6%;
+    }
 }

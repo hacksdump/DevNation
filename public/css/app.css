@@ -10466,6 +10466,10 @@ a.text-dark:focus {
   }
 }
 
+.hidden {
+  display: none;
+}
+
 .container {
   text-align: center;
 }
@@ -10558,5 +10562,13 @@ img.query-image {
   padding-right: 10%;
   -o-object-fit: contain;
      object-fit: contain;
+}
+
+pre.CodeMirror-line {
+  text-align: left !important;
+}
+
+pre.CodeMirror-line > span {
+  margin-left: 6%;
 }
 
